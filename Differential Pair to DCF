@@ -1,0 +1,29 @@
+import pandas as pd
+
+#Differential pairs result file to copy to dcf
+f = open("d:\differential_pairs.txt", 'a+')
+
+#Read a net list
+#Format(CSV format net list), 0M and 0S are a pair
+#  Pairs |  Names
+#   0M   |  IO_L0P
+#   0S   |  IO_L0N
+#   ...  |   ...
+diff = pd.read_csv('d:\differential.csv', index_col=0)
+
+#Repeat 480 times(It's counting 0 to 479)
+for i in range(480):
+    #Define pair names for '#M' and '#S'
+    MPair = (str(i)+"M")
+    SPair = (str(i)+"S")
+    #Getting each net name for a pair
+    A=diff.loc[MPair,'Names']
+    B=diff.loc[SPair,'Names']
+    #Wrting the differential pair definition as DCF format.
+    f.write("\t\t\t( differentialPair \"DIFF_" + str(A) + "\"\n")
+    f.write("\t\t\t\t( memberType ( signal ) )\r\n")
+    f.write("\t\t\t\t( member ( signalRef \"" + str(A) + "\") )\r\n")
+    f.write("\t\t\t\t( member ( signalRef \"" + str(B) + "\") )\r\n")
+    f.write("\t\t\t\t( objectStatus \"\@lib.DR0044969_JUL05_1(view):\DIFF_" + str(A) + "\\\" )\r\n")
+    f.write("\t\t\t)\r\n")
+    i=i+1
